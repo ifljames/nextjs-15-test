@@ -2,6 +2,7 @@
 "use server";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { neon } from "@neondatabase/serverless";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function getBlogPosts() {
@@ -27,7 +28,7 @@ export async function createPost(formData: FormData) {
   const user = await getUser();
 
   if (!user) {
-    redirect('/api/auth/register')
+    redirect("/api/auth/register");
   }
 
   const title = formData.get("title")?.toString() || "";
@@ -40,6 +41,8 @@ export async function createPost(formData: FormData) {
   try {
     await sql`INSERT INTO "BlogPost" ("title", "content", "imageUrl", "authorId", "authorName", "authorImage") 
       VALUES (${title}, ${content}, ${image}, ${authorId}, ${authorName}, ${authorImage})`;
+
+    revalidatePath("/");
 
     redirect("/dashboard");
   } catch (error) {
