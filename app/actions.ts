@@ -12,7 +12,7 @@ export async function getBlogPosts() {
     );
   }
   const sql = neon(process.env.DATABASE_URL);
-  const data = await sql`SELECT * FROM "BlogPost"`;
+  const data = await sql`SELECT * FROM "BlogPost" ORDER BY "createdAt" DESC`;
   return data;
 }
 
@@ -68,6 +68,6 @@ export async function getBlogPost(postId: string) {
     );
   }
   const sql = neon(process.env.DATABASE_URL);
-  const data = await sql`SELECT * FROM "BlogPost" WHERE "id" = ${postId} ORDER BY "createdAt" DESC`;
+  const data = await sql`SELECT * FROM "BlogPost" WHERE "id" = ${postId}`;
   return data[0] || null;
 }
